@@ -57,11 +57,13 @@ def get_ratings(usattid: int | str) -> dict:
     }
 
 
-def get_usatt_summary() -> pd.DataFrame:
+def get_usatt_summary(query: str | None = None, filter: dict | None = None) -> pd.DataFrame:
     """
     Get a pandas DataFrame of a summary of all USATT ratings.
 
-    :return:
+    :param query: Query string on USATT website. Usually a name or USATT number.
+    :param filter: Filter criteria as a dict, e.g. {"minAge": 18}.
+    :return: Pandas DataFrame.
     """
     offset = 0
 
@@ -78,8 +80,12 @@ def get_usatt_summary() -> pd.DataFrame:
         "Last Played League",
     ]
     params = [("displayColumns", c) for c in cols]
-    params.append(("pageSize", 1000))
-    params.append(("max", 1000))
+    params.append(("pageSize", 1000))  # type: ignore
+    params.append(("max", 1000))  # type: ignore
+    if query is not None:
+        params.append(("q", query))
+    if filter is not None:
+        params.extend(filter.items())
     while True:
         url = f"{BASEURL}/s2"
 
