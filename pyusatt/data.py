@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
+BASEURL = "https://usatt.simplycompete.com/userAccount"
+
 
 def get_ratings(usattid: int | str) -> dict:
     """
@@ -25,7 +27,7 @@ def get_ratings(usattid: int | str) -> dict:
         "Leagues Played": vals[5]
     }.
     """
-    r = requests.get(f"https://usatt.simplycompete.com/userAccount/s2?q={usattid}")
+    r = requests.get(f"{BASEURL}/s2", params={"q": usattid})
 
     if r.status_code != 200:
         raise RuntimeError("No connection to USATT.")
@@ -64,10 +66,24 @@ def get_usatt_summary() -> pd.DataFrame:
     offset = 0
 
     dfs = []
+    cols = [
+        "First Name",
+        "Last Name",
+        "USATT#",
+        "Location",
+        "Home Club",
+        "Tournament Rating",
+        "Last Played Tournament",
+        "League Rating",
+        "Last Played League",
+    ]
+    params = [("displayColumns", c) for c in cols]
+    params.append(("pageSize", 1000))
+    params.append(("max", 1000))
     while True:
-        url = f"https://usatt.simplycompete.com/userAccount/s2?displayColumns=First+Name&displayColumns=Last+Name&displayColumns=USATT%23&displayColumns=Location&displayColumns=Home+Club&displayColumns=Tournament+Rating&displayColumns=Last+Played+Tournament&displayColumns=League+Rating&displayColumns=Last+Played+League&displayColumns=Membership+Expiration&pageSize=1000&format=&offset={offset}&max=1000"
+        url = f"{BASEURL}/s2"
 
-        r = requests.get(url)
+        r = requests.get(url, [*params, ("offset", offset)])
 
         if r.status_code != 200:
             raise RuntimeError("No connection to USATT.")

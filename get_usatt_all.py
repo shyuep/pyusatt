@@ -11,4 +11,6 @@ warnings.simplefilter("ignore")
 
 all_data = get_usatt_summary()
 
+print(all_data)
+
 all_data.to_csv("usatt.csv")
