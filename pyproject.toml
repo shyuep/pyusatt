@@ -3,11 +3,11 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyusatt"
+name = "usatt"
 authors = [
     {name = "Shyue Ping Ong", email = "shyuep@gmail.com"},
 ]
-description = "Python tools for working with the USATT website"
+description = "Python tools for working with the USATT website."
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["usatt", "table tennis"]
@@ -22,8 +22,11 @@ dependencies = [
 ]
 version = "0.0.1"
 
+[project.scripts]
+usatt = "usatt.cli:main"
+
 [tool.setuptools]
-packages = ["pyusatt"]
+packages = ["usatt"]
 
 [tool.black]
 line-length = 120
