@@ -41,7 +41,6 @@ def get_ratings(usattid: int | str) -> dict:
         if "userAccount/up" in url:
             accountid = url.split("/")[-1]
             name.append(link.text)
-            break
 
     r = requests.get(f"http://usatt.simplycompete.com/userAccount/up/{accountid}")
     soup = BeautifulSoup(r.content)
