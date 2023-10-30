@@ -19,7 +19,6 @@ def get_usatt(args):
     data = []
 
     for usattid in args.ids:
-        print(usattid)
         data.append(get_ratings(usattid))
 
     df = pd.DataFrame(data)
