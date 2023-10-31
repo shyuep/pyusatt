@@ -18,7 +18,8 @@ dependencies = [
   "beautifulsoup4",
   "requests",
   "lxml",
-  "pandas"
+  "pandas",
+  "tqdm"
 ]
 version = "0.0.2"
 

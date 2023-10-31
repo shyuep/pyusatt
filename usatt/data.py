@@ -6,6 +6,7 @@ import logging
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +87,7 @@ def get_usatt_summary(query: str | None = None, filter: dict | None = None) -> p
         params.append(("q", query))
     if filter is not None:
         params.extend(filter.items())
+    total_pages = -1
     while True:
         url = f"{BASEURL}/s2"
 
@@ -95,6 +97,20 @@ def get_usatt_summary(query: str | None = None, filter: dict | None = None) -> p
             raise RuntimeError("No connection to USATT.")
 
         df = pd.read_html(r.content)[0]
+
+        if total_pages == -1:
+            soup = BeautifulSoup(r.content)
+
+            for link in soup.find_all("a"):
+                url = link.get("href")
+                if "offset" in url:
+                    try:
+                        total_pages = max(total_pages, int(link.text))
+                    except ValueError:
+                        pass
+            pbar = tqdm(total=total_pages)
+
+        pbar.update(1)
 
         if len(df) == 0:
             break
