@@ -10,3 +10,5 @@ def test_cli():
     assert exit_status == 0
     assert os.path.exists("usatt.csv")
     os.remove("usatt.csv")
+    exit_status = os.system("usatt summary --criteria 31126 --filter maxAge=18")
+    assert exit_status == 0
