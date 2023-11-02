@@ -1,3 +1,7 @@
+[![CI Status](https://github.com/shyuep/usatt/actions/workflows/testing.yml/badge.svg)](https://github.com/shyuep/usatt/actions/workflows/testing.yml)
+[![codecov](https://codecov.io/gh/shyuep/usatt/graph/badge.svg?token=OEV3THG9QI)](https://codecov.io/gh/shyuep/usatt)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/usatt?logo=pypi&logoColor=white&color=blue&label=PyPI)](https://pypi.org/project/usatt)
+
 # USATT
 
 Python tools for working with the USA Table Tennis (USATT) website. As far as I am aware, there is no official API
