@@ -22,7 +22,7 @@ dependencies = [
   "tqdm",
   "tabulate"
 ]
-version = "0.0.2"
+version = "0.0.3"
 
 [project.scripts]
 usatt = "usatt.cli:main"
