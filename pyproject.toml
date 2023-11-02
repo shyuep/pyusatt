@@ -19,7 +19,8 @@ dependencies = [
   "requests",
   "lxml",
   "pandas",
-  "tqdm"
+  "tqdm",
+  "tabulate"
 ]
 version = "0.0.2"
 
