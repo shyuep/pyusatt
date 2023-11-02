@@ -36,7 +36,7 @@ def get_ratings(usattid: int | str) -> dict:
     if r.status_code != 200:
         raise RuntimeError("No connection to USATT.")
 
-    soup = BeautifulSoup(r.content)
+    soup = BeautifulSoup(r.content, features="lxml")
 
     name = []
 
@@ -47,7 +47,7 @@ def get_ratings(usattid: int | str) -> dict:
             name.append(link.text)
 
     r = requests.get(f"http://usatt.simplycompete.com/userAccount/up/{accountid}")
-    soup = BeautifulSoup(r.content)
+    soup = BeautifulSoup(r.content, features="lxml")
     vals = [int(d.text) for d in soup.find_all("span", class_="details-text")]
     return {
         "USATT#": usattid,
@@ -104,7 +104,7 @@ def get_summary(query: str | None = None, filter: dict | None = None) -> pd.Data
         df = pd.read_html(r.content)[0]
 
         if total_pages == -1:
-            soup = BeautifulSoup(r.content)
+            soup = BeautifulSoup(r.content, features="lxml")
 
             for link in soup.find_all("a"):
                 url = link.get("href")
