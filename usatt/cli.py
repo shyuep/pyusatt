@@ -6,12 +6,12 @@ import warnings
 
 import pandas as pd
 
-from usatt.data import get_ratings, get_usatt_summary
+from usatt._data import get_ratings, get_summary
 
 warnings.simplefilter("ignore")
 
 
-def get_usatt(args):
+def run_get_ratings(args):
     """
     Get detailed usatt stats for a few users.
     :param args: Input args.
@@ -26,7 +26,7 @@ def get_usatt(args):
     print(df.to_markdown())
 
 
-def get_summary(args):
+def run_get_summary(args):
     """
     Get summary USATT stats.
     :param args: Input args.
@@ -35,7 +35,7 @@ def get_summary(args):
     if args.filter is not None:
         filter_ = dict([k.split("=") for k in args.filter])
 
-    all_data = get_usatt_summary(query=args.criteria, filter=filter_)
+    all_data = get_summary(query=args.criteria, filter=filter_)
 
     if args.outfile:
         all_data.to_csv(args.outfile)
@@ -62,7 +62,7 @@ def main():
         required=True,
         help="USATT ids to look for.",
     )
-    p_ratings.set_defaults(func=get_usatt)
+    p_ratings.set_defaults(func=run_get_ratings)
 
     p_summary = subparsers.add_parser("summary", help="Get a summary of USATT ratings based on a search.")
 
@@ -90,7 +90,7 @@ def main():
         help="Output filename. If not specified, it will be printed to stdout.",
     )
 
-    p_summary.set_defaults(func=get_summary)
+    p_summary.set_defaults(func=run_get_summary)
 
     args = parser.parse_args()
 

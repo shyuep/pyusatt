@@ -1,4 +1,4 @@
-"""Getting data from USATT website."""
+"""Implements various functions to query and parse HTML pages from USATT website."""
 from __future__ import annotations
 
 import logging
@@ -16,17 +16,20 @@ BASEURL = "https://usatt.simplycompete.com/userAccount"
 def get_ratings(usattid: int | str) -> dict:
     """
     Get ratings for a specific USATT#.
-    :param usattid: USATT#
-    :return: {
-        "USATT#": usattid,
-        "Name": " ".join(name),
-        "Tournament Rating": vals[0],
-        "Highest Tournament Rating": vals[1],
-        "Tournaments Played": vals[2],
-        "League Rating": vals[3],
-        "Highest League Rating": vals[4],
-        "Leagues Played": vals[5]
-    }.
+
+    Args:
+        usattid: USATT#
+
+    Returns: {
+            "USATT#": usattid,
+            "Name": " ".join(name),
+            "Tournament Rating": vals[0],
+            "Highest Tournament Rating": vals[1],
+            "Tournaments Played": vals[2],
+            "League Rating": vals[3],
+            "Highest League Rating": vals[4],
+            "Leagues Played": vals[5]
+        }
     """
     r = requests.get(f"{BASEURL}/s2", params={"q": usattid})
 
@@ -58,13 +61,15 @@ def get_ratings(usattid: int | str) -> dict:
     }
 
 
-def get_usatt_summary(query: str | None = None, filter: dict | None = None) -> pd.DataFrame:
+def get_summary(query: str | None = None, filter: dict | None = None) -> pd.DataFrame:
     """
     Get a pandas DataFrame of a summary of all USATT ratings.
 
-    :param query: Query string on USATT website. Usually a name or USATT number.
-    :param filter: Filter criteria as a dict, e.g. {"minAge": 18}.
-    :return: Pandas DataFrame.
+    Args:
+        query: Query string on USATT website. Usually a name or USATT number.
+        filter: Filter criteria as a dict, e.g. {"minAge": 18}.
+
+    Returns: Summary of USATT ratings as a Pandas DataFrame
     """
     offset = 0
 
