@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 
 import pandas as pd
 import requests
@@ -10,7 +11,19 @@ from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
-BASEURL = "https://usatt.simplycompete.com/userAccount"
+BASEURL = "http://usatt.simplycompete.com/userAccount"
+MAX_ENTRIES = 1000  # We use the maximum 1000 entries per page to minimize calls.
+SUMMARY_DISPLAY_COLS = (  # Columns to get for summary.
+    "First Name",
+    "Last Name",
+    "USATT#",
+    "Location",
+    "Home Club",
+    "Tournament Rating",
+    "Last Played Tournament",
+    "League Rating",
+    "Last Played League",
+)
 
 
 def get_ratings(usattid: int | str) -> dict:
@@ -46,7 +59,7 @@ def get_ratings(usattid: int | str) -> dict:
             accountid = url.split("/")[-1]
             name.append(link.text)
 
-    r = requests.get(f"http://usatt.simplycompete.com/userAccount/up/{accountid}")
+    r = requests.get(f"{BASEURL}/up/{accountid}")
     soup = BeautifulSoup(r.content, features="lxml")
     vals = [int(d.text) for d in soup.find_all("span", class_="details-text")]
     return {
@@ -61,41 +74,33 @@ def get_ratings(usattid: int | str) -> dict:
     }
 
 
-def get_summary(query: str | None = None, filter: dict | None = None) -> pd.DataFrame:
+def get_summary(
+    query: str | None = None, filter: dict | None = None, display_cols: list | tuple = SUMMARY_DISPLAY_COLS
+) -> pd.DataFrame:
     """
     Get a pandas DataFrame of a summary of all USATT ratings.
 
     Args:
         query: Query string on USATT website. Usually a name or USATT number.
         filter: Filter criteria as a dict, e.g. {"minAge": 18}.
+        display_cols: Columns to display. Defaults to everything currently shown in USATT summaries.
 
     Returns: Summary of USATT ratings as a Pandas DataFrame
     """
     offset = 0
 
     dfs = []
-    cols = [
-        "First Name",
-        "Last Name",
-        "USATT#",
-        "Location",
-        "Home Club",
-        "Tournament Rating",
-        "Last Played Tournament",
-        "League Rating",
-        "Last Played League",
-    ]
-    params = [("displayColumns", c) for c in cols]
-    params.append(("pageSize", 1000))  # type: ignore
-    params.append(("max", 1000))  # type: ignore
+
+    params = [("displayColumns", c) for c in display_cols]
+    params.append(("pageSize", MAX_ENTRIES))  # type: ignore
+    params.append(("max", MAX_ENTRIES))  # type: ignore
     if query is not None:
         params.append(("q", query))
     if filter is not None:
         params.extend(filter.items())
     total_pages = -1
+    url = f"{BASEURL}/s2"
     while True:
-        url = f"{BASEURL}/s2"
-
         r = requests.get(url, [*params, ("offset", offset)])
 
         if r.status_code != 200:
@@ -123,10 +128,10 @@ def get_summary(query: str | None = None, filter: dict | None = None) -> pd.Data
         logger.info(f"Entries {offset+1}-{offset+len(df)}")
 
         dfs.append(df)
-        offset += 1000
-        if offset > 30000:
-            # In case there is a problem, we will break. There shouldn't be more than 30000 USATT players.
-            print("Infinite loop?")
+        offset += MAX_ENTRIES
+        if offset / MAX_ENTRIES > total_pages + 2:
+            # In case there is a problem, we will break.
+            warnings.warn(f"{offset/MAX_ENTRIES} pages detected when the total pages should be {total_pages}!")
             break
 
     all_data = pd.concat(dfs)
