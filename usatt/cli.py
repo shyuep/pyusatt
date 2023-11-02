@@ -6,7 +6,7 @@ import warnings
 
 import pandas as pd
 
-from usatt._data import get_ratings, get_summary
+from ._data import get_ratings, get_summary
 
 warnings.simplefilter("ignore")
 
