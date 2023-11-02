@@ -112,8 +112,8 @@ def get_summary(
             soup = BeautifulSoup(r.content, features="lxml")
 
             for link in soup.find_all("a"):
-                url = link.get("href")
-                if "offset" in url:
+                href = link.get("href")
+                if "offset" in href:
                     try:
                         total_pages = max(total_pages, int(link.text))
                     except ValueError:
