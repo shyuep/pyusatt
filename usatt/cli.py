@@ -1,4 +1,5 @@
 """Script to get the USATT ratings based on USATT#s."""
+
 from __future__ import annotations
 
 import argparse

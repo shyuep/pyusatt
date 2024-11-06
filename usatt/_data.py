@@ -1,4 +1,5 @@
 """Implements various functions to query and parse HTML pages from USATT website."""
+
 from __future__ import annotations
 
 import logging
